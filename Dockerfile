@@ -1,22 +1,36 @@
-FROM node:18-alpine
+# Stage 1: Builder
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Install build dependencies
+COPY package*.json ./
+RUN npm ci
+
+# Copy source and build
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
+COPY src ./src
+RUN npm run build
+
+# Stage 2: Runner
+FROM node:18-alpine AS runner
 
 # Install FFmpeg for video processing
 RUN apk add --no-cache ffmpeg
 
-# Create app directory
 WORKDIR /app
 
-# Copy package files
+# Install production dependencies only
 COPY package*.json ./
-
-# Install dependencies
 RUN npm ci --only=production
 
-# Copy source code
-COPY dist ./dist
+# Copy built application from builder stage
+COPY --from=builder /app/dist ./dist
 
 # Create temp directory for file processing
-RUN mkdir -p temp
+RUN mkdir -p temp && chown -R node:node temp
+USER node
 
 # Expose port
 EXPOSE 3000

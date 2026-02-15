@@ -7,6 +7,3 @@ ffmpeg-python
 flask
 flask-cors
 requests
-sentence-transformers
-transformers
-scikit-learn

@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   app:
+    container_name: ai_video_extractor_app
     build: .
     ports:
       - "3000:3000"
@@ -20,6 +21,7 @@ services:
     restart: unless-stopped
 
   whisper:
+    container_name: ai_video_extractor_whisper
     build:
       context: ./python-whisper
       dockerfile: Dockerfile
@@ -34,6 +36,7 @@ services:
     restart: unless-stopped
 
   postgres:
+    container_name: ai_video_extractor_postgres
     image: postgres:15-alpine
     environment:
       POSTGRES_DB: ai_video_extractor
@@ -46,6 +49,7 @@ services:
     restart: unless-stopped
 
   redis:
+    container_name: ai_video_extractor_redis
     image: redis:7-alpine
     ports:
       - "6379:6379"
